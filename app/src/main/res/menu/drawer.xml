@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:title="@string/drawer_settings">
+            <menu>
+                <item
+                    android:title="@string/drawer_set_retention"
+                    android:checked="false"
+                    android:icon="@drawable/ic_access_time_black_24dp"
+                    android:id="@+id/retention"/>
+                <item
+                    android:title="@string/drawer_set_vibration"
+                    android:checked="false"
+                    android:icon="@drawable/ic_vibration_black_24dp"
+                    android:id="@+id/vibration"/>
+            </menu>
+        </item>
+        <item android:title="@string/drawer_data">
+            <menu>
+            <item
+                android:title="@string/drawer_set_all_read"
+                android:checked="false"
+                android:icon="@drawable/ic_done_all_black_24dp"
+                android:id="@+id/set_all_read"/>
+            <item
+                android:title="@string/drawer_delete_all"
+                android:checked="false"
+                android:icon="@drawable/ic_delete_forever_black_24dp"
+                android:id="@+id/delete_all"/>
+            </menu>
+        </item>
+        <item android:title="@string/drawer_other">
+            <menu>
+                <item
+                    android:title="@string/drawer_about"
+                    android:checked="false"
+                    android:icon="@drawable/ic_info_black_24dp"
+                    android:id="@+id/about"/>
+            </menu>
+        </item>
+    </group>
+</menu>

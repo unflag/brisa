@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Brisa</string>
+    <string name="no_messages">No messages</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_data">Data</string>
+    <string name="drawer_other">Other</string>
+    <string name="drawer_set_retention">Set retention policy</string>
+    <string name="drawer_set_vibration">Set vibration on/off</string>
+    <string name="drawer_set_all_read">Mark all as read</string>
+    <string name="drawer_delete_all">Delete all messages</string>
+    <string name="drawer_about">About Brisa</string>
+    <string name="drawer_access">Drawer content access</string>
+    <string name="toolbar_search">Search</string>
+</resources>
