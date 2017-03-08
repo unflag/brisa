@@ -3,56 +3,56 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:background="@android:color/transparent">
+    android:paddingRight="8dp">
     <TextView
+        android:id="@+id/text_view_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
         android:fontFamily="sans-serif"
         android:maxLines="1"
-        android:id="@+id/text_view_subject"/>
+        android:textSize="14sp" />
     <TextView
+        android:id="@+id/text_view_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_view_subject"
-        android:textSize="14sp"
-        android:fontFamily="sans-serif-light"
-        android:requiresFadingEdge="vertical"
         android:fadingEdgeLength="30dp"
+        android:fontFamily="sans-serif-light"
         android:maxLines="@integer/MAX_LINES_DEFAULT"
-        android:id="@+id/text_view_text"/>
+        android:requiresFadingEdge="vertical"
+        android:textSize="12sp" />
     <View
+        android:id="@+id/separator_right"
         android:layout_width="128dp"
         android:layout_height="1dp"
-        android:background="#d3d3d3"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/text_view_text"
-        android:id="@+id/separator_right"/>
+        android:background="#d3d3d3" />
     <TextView
+        android:id="@+id/text_view_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator_right"
         android:layout_alignParentStart="true"
-        android:textSize="12sp"
+        android:layout_below="@+id/separator_right"
         android:fontFamily="sans-serif-light"
-        android:id="@+id/text_view_level"/>
+        android:textSize="10sp" />
     <ImageView
+        android:id="@+id/expand_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/separator_right"
         android:layout_centerInParent="true"
         android:scaleX="0.6"
         android:scaleY="0.6"
-        android:src="@drawable/ic_expand_more_black_24dp"
-        android:id="@+id/expand_icon"/>
+        android:src="@drawable/ic_expand_more_black_24dp" />
     <TextView
+        android:id="@+id/text_view_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator_right"
         android:layout_alignParentEnd="true"
-        android:textSize="12sp"
+        android:layout_below="@+id/separator_right"
         android:fontFamily="sans-serif-light"
-        android:id="@+id/text_view_timestamp"/>
+        android:textSize="10sp" />
 </RelativeLayout>

@@ -4,11 +4,15 @@
     <string name="drawer_settings">Settings</string>
     <string name="drawer_data">Data</string>
     <string name="drawer_other">Other</string>
-    <string name="drawer_set_retention">Set retention policy</string>
-    <string name="drawer_set_vibration">Set vibration on/off</string>
+    <string name="drawer_set_retention">Retention policy</string>
+    <string name="drawer_set_vibration">Notifications on/off</string>
     <string name="drawer_set_all_read">Mark all as read</string>
     <string name="drawer_delete_all">Delete all messages</string>
     <string name="drawer_about">About Brisa</string>
     <string name="drawer_access">Drawer content access</string>
+    <string name="drawer_item_agreement">Are you sure?</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">CANCEL</string>
     <string name="toolbar_search">Search</string>
+    <string name="about_brisa_message">Brisa is an application for Brisa Server which is system for reliable, convenient and fast control of your monitoring notifications.\n\n&#169; Vyacheslav Mitrofanov</string>
 </resources>

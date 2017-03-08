@@ -15,12 +15,11 @@ import android.widget.TextView;
 // custom CursorAdapter which holds info about rows state and binds views to list
 class MessagesAdapter extends CursorAdapter {
 
+    private Resources resources = MessagesActivity.resources;
+    private LongSparseArray<Boolean> expandedMap = new LongSparseArray<>();
     MessagesAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
-
-    private Resources resources = MessagesActivity.resources;
-    private LongSparseArray<Boolean> expandedMap = new LongSparseArray<>();
 
     void setExpanded(long id, boolean state) {
         expandedMap.put(id, state);
@@ -80,7 +79,7 @@ class MessagesAdapter extends CursorAdapter {
 
                 // choose row background depending on messages state states
                 if (status == 0) {
-                    view.setBackgroundColor(resources.getColor(R.color.colorUnreadBg, context.getTheme()));
+                    view.setBackgroundColor(resources.getColor(R.color.colorListBg, context.getTheme()));
                 } else view.setBackgroundColor(Color.TRANSPARENT);
 
                 /* choose expanded/collapsed state for textViewText.

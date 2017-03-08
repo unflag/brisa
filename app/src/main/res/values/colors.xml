@@ -6,5 +6,5 @@
     <color name="colorStateOK">#388E3C</color>
     <color name="colorStateWARNING">#FFB300</color>
     <color name="colorStateCRITICAL">#F44336</color>
-    <color name="colorUnreadBg">#E1F5FE</color>
+    <color name="colorListBg">#E1F5FE</color>
 </resources>

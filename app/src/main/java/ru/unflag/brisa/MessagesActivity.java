@@ -1,10 +1,11 @@
 package ru.unflag.brisa;
 
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -15,29 +16,26 @@ import android.os.Bundle;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.text.TextUtils;
-import android.util.LongSparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.CursorAdapter;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
-public class MessagesActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class MessagesActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemLongClickListener {
 
     public static final String LOG_TAG = "LOG_TAG";
     public static final String BROADCAST_ACTION = "com.google.firebase.MESSAGING_EVENT";
@@ -46,16 +44,20 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
     public static String filter;
     public static int minLines;
 
+
     TextView textViewTest;
     ListView listView;
     Toolbar toolbar;
-    DatabaseController databaseController;
     BroadcastReceiver messagesReceiver;
     MessagesAdapter messagesAdapter;
+    DatabaseController databaseController;
     ActionBar actionBar;
     ActionBarDrawerToggle drawerToggle;
     DrawerLayout drawerLayout;
     SearchView searchView;
+    NavigationView navigationView;
+    LoaderManager loaderManager;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(messagesAdapter);
         listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
         listView.setEmptyView(findViewById(R.id.empty));
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,9 +82,13 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
 
         getWindow().clearFlags(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
+        navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         databaseController = new DatabaseController(this);
         databaseController.open();
-        getLoaderManager().initLoader(0, null, this);
+        loaderManager = getLoaderManager();
+        loaderManager.initLoader(0, null, this);
 
         String authToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(LOG_TAG, "Current token: " + authToken);
@@ -127,28 +134,46 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
         long msgId = viewHolder.msgId;
         int maxLines = viewHolder.textViewText.getLineCount();
 
-        ObjectAnimator animator = new ObjectAnimator().ofInt(viewHolder.textViewText, "maxLines", maxLines);
-        animator.setDuration(75);
-
         if (viewHolder.textViewText.getMaxLines() == minLines) {
             messagesAdapter.setExpanded(msgId, true);
-            animator.start();
+            viewHolder.textViewText.setMaxLines(maxLines);
             viewHolder.expandIcon.setImageResource(R.drawable.ic_expand_less_black_24dp);
             if (viewHolder.msgStatus == 0) {
                 parent.setBackgroundColor(Color.TRANSPARENT);
                 databaseController.setRead(msgId);
-                getLoaderManager().getLoader(0).onContentChanged();
+                loaderManager.getLoader(0).onContentChanged();
             }
         }
         else {
             messagesAdapter.setExpanded(msgId, false);
-            animator.setIntValues(minLines);
-            animator.start();
+            viewHolder.textViewText.setMaxLines(minLines);
             viewHolder.expandIcon.setImageResource(R.drawable.ic_expand_more_black_24dp);
         }
     }
 
-    // group of loader collbacks
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        final long msgId = viewHolder.msgId;
+        Log.d(LOG_TAG, "Message Id " + msgId);
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete message?");
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                databaseController.deleteMessage(msgId);
+                loaderManager.getLoader(0).onContentChanged();
+            }
+        });
+        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Do nothing
+            }
+        });
+        builder.create().show();
+        return true;
+    }
+
+    // group of loader callbacks
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         return new MessagesCursorLoader(this, databaseController);
@@ -163,7 +188,7 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    // menu callbacks - drawer and toolbar
+    // group of menu callbacks - drawer and toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -176,12 +201,12 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
             public boolean onQueryTextChange(String string) {
                 if (string.length() >= 3) {
                     filter = string;
-                    getLoaderManager().restartLoader(0, null, MessagesActivity.this);
+                    loaderManager.restartLoader(0, null, MessagesActivity.this);
 
                 }
                 else if (string.length() < 3) {
                     filter = null;
-                    getLoaderManager().restartLoader(0, null, MessagesActivity.this);
+                    loaderManager.restartLoader(0, null, MessagesActivity.this);
                 }
                 return true;
             }
@@ -212,8 +237,23 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
         if (drawerToggle.onOptionsItemSelected(menuItem)) {
             return true;
         }
-
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.vibration) {
+            Switch switchButton = (Switch) menuItem.getActionView().findViewById(R.id.switch_button);
+            if (switchButton.isChecked()) {
+                switchButton.toggle();
+            } else {
+                switchButton.toggle();
+            }
+        } else {
+            DrawerItemDialog itemDialog = new DrawerItemDialog(this, databaseController, loaderManager, menuItem);
+            itemDialog.getDialog().show();
+        }
+        return true;
     }
 
     @Override
@@ -242,11 +282,9 @@ public class MessagesActivity extends Activity implements LoaderManager.LoaderCa
         @Override
         public Cursor loadInBackground() {
             if (filter == null) {
-                Log.d(LOG_TAG, "getMessages");
                 return databaseController.getMessages();
             }
             else {
-                Log.d(LOG_TAG, "getFilteredMessages");
                 return databaseController.getFilteredMessages(filter);
             }
         }
